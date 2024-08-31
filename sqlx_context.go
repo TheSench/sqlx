@@ -26,6 +26,7 @@ func ConnectContext(ctx context.Context, driverName, dataSourceName string) (*DB
 type QueryerContext interface {
 	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
 	QueryxContext(ctx context.Context, query string, args ...interface{}) (*Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 	QueryRowxContext(ctx context.Context, query string, args ...interface{}) *Row
 }
 
@@ -409,6 +410,10 @@ func (q *qStmt) QueryxContext(ctx context.Context, query string, args ...interfa
 		return nil, err
 	}
 	return &Rows{Rows: r, unsafe: q.Stmt.unsafe, Mapper: q.Stmt.Mapper}, err
+}
+
+func (q *Stmt) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
+	return q.Stmt.QueryRowContext(ctx, args...)
 }
 
 func (q *qStmt) QueryRowxContext(ctx context.Context, query string, args ...interface{}) *Row {
